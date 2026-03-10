@@ -1,0 +1,1604 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comunettv | Internet para disfrutar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00d9ff; 
+            --bg: #01040a;
+            --border: rgba(255, 255, 255, 0.12);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+        body { background: var(--bg); color: #fff; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+
+        /* NAV FLOTANTE */
+        header {
+            position: fixed;
+            top: 25px; left: 50%;
+            transform: translateX(-50%);
+            width: 85%; max-width: 1100px;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 8px 30px; /* Reducido padding para compensar el recuadro del logo */
+            z-index: 1000;
+            background: rgba(1, 4, 10, 0.65);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+        }
+
+        /* RECUADRO PARA LOGO IMAGEN */
+        .logo-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            padding: 10px 20px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.3s ease;
+        }
+        
+        .logo-box:hover {
+            background: rgba(0, 217, 255, 0.08);
+            border-color: var(--primary);
+        }
+
+        .logo-img { 
+            height: 55px; /* Tamaño grande y cerca */
+            width: auto;
+            display: block;
+            filter: drop-shadow(0 0 10px rgba(0, 217, 255, 0.2));
+        }
+
+        .btn-whatsapp {
+            background: #25d366;
+            color: #fff; padding: 10px 24px;
+            border-radius: 50px; font-weight: 600; font-size: 0.85rem;
+            text-decoration: none; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .btn-whatsapp:hover { transform: scale(1.05); box-shadow: 0 8px 20px rgba(37, 211, 102, 0.3); }
+
+        /* HERO Y FONDO */
+        .hero {
+            position: relative;
+            height: 100vh; width: 100%;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+        }
+
+        .video-viewport {
+            position: absolute;
+            width: 55%; height: 45%; 
+            z-index: -2;
+            border-radius: 60px;
+            overflow: hidden;
+            box-shadow: 0 0 100px rgba(0, 0, 0, 0.8);
+            filter: brightness(0.3) contrast(1.2);
+        }
+
+        #bg-video { width: 100%; height: 100%; object-fit: cover; }
+
+        #nodes-canvas {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            opacity: 0.3; 
+            pointer-events: none;
+        }
+
+        .hero-overlay {
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(circle at center, transparent 0%, var(--bg) 80%);
+            z-index: -1;
+        }
+
+        /* CONTENIDO ENFOCADO A CONVERSIÓN */
+        .content { 
+            text-align: center; 
+            max-width: 850px;
+            z-index: 10;
+            padding: 0 5%;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 8vw, 4.8rem); 
+            font-weight: 800;
+            line-height: 1.1; margin-bottom: 25px;
+            letter-spacing: -2px;
+        }
+
+        h1 mark { background: none; color: var(--primary); }
+
+        p {
+            font-size: clamp(1.2rem, 2.5vw, 1.4rem); 
+            color: rgba(255,255,255,0.7); margin-bottom: 40px;
+            font-weight: 400; line-height: 1.5;
+            max-width: 650px; margin-left: auto; margin-right: auto;
+        }
+
+        .cta-group {
+            display: flex; flex-direction: column; align-items: center; gap: 15px;
+        }
+
+        .main-btn {
+            background: #fff; color: var(--bg);
+            padding: 22px 60px; border-radius: 100px;
+            font-size: 1.2rem; font-weight: 800;
+            text-decoration: none; 
+            transition: all 0.4s ease;
+            box-shadow: 0 10px 40px rgba(0, 217, 255, 0.2);
+        }
+
+        .main-btn:hover {
+            transform: translateY(-5px);
+            background: var(--primary);
+            box-shadow: 0 15px 50px rgba(0, 217, 255, 0.4);
+        }
+
+        .human-note {
+            color: rgba(255,255,255,0.4);
+            font-size: 0.95rem;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        /* SECCIÓN SERVICIOS (ESTILOS FALTANTES) */
+        .services-section { padding: 100px 0; position: relative; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .section-intro { text-align: center; margin-bottom: 60px; }
+        .section-intro h2 { font-size: 3rem; margin-bottom: 20px; }
+        .section-intro mark { background: none; color: var(--primary); }
+        .services-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            gap: 30px; 
+        }
+        .service-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            padding: 40px;
+            border-radius: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        .service-card h3 { margin: 20px 0 15px; font-size: 1.5rem; }
+        .icon-box { font-size: 3rem; }
+        .card-footer { margin-top: 25px; color: var(--primary); font-size: 0.8rem; font-weight: 600; text-transform: uppercase; }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            header { width: 92%; top: 15px; padding: 8px 15px; }
+            .logo-box { padding: 6px 12px; }
+            .logo-img { height: 42px; }
+            .video-viewport { width: 90%; height: 35%; top: 22%; }
+            h1 { letter-spacing: -1px; }
+            .content { padding-top: 60px; }
+            .main-btn { width: 100%; padding: 18px 30px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="https://comunettv.com/" class="logo-box">
+            <img src="Imagenes/Logo-comunettv.png" alt="Comunettv" class="logo-img">
+        </a>
+        <a href="https://wa.me/573019023022" class="btn-whatsapp">Hablar ahora</a>
+    </header>
+
+    <section class="hero">
+        <div class="video-viewport">
+            <video autoplay muted loop id="bg-video" playsinline>
+                <source src="Videos/Fondo-Comunettv.mp4" type="video/mp4">
+            </video>
+        </div>
+        
+        <canvas id="nodes-canvas"></canvas>
+        <div class="hero-overlay"></div>
+
+        <div class="content">
+            <h1>Internet veloz para <mark>toda tu familia.</mark></h1>
+            <p>Conecta tu casa en Itagüí con la fibra más estable. Queremos que navegues tranquilo, sin caídas y con alguien que siempre te responda.</p>
+            
+            <div class="cta-group">
+                <a href="https://wa.me/573019023022" class="main-btn">Contratar ahora mismo</a>
+                <span class="human-note">Servicio rápido, sin esperas y sin contratos que te aten.</span>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const canvas = document.getElementById('nodes-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function init() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            particles = [];
+            const particleCount = window.innerWidth < 768 ? 45 : 90; 
+            for(let i=0; i<particleCount; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 0.18, 
+                    vy: (Math.random() - 0.5) * 0.18,
+                    size: Math.random() * 2 + 0.8
+                });
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0,0,canvas.width, canvas.height);
+            particles.forEach((p, i) => {
+                p.x += p.vx; p.y += p.vy;
+                if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+                ctx.fillStyle = "rgba(0, 217, 255, 0.6)";
+                ctx.fill();
+                for(let j=i+1; j<particles.length; j++) {
+                    let p2 = particles[j];
+                    let dist = Math.hypot(p.x - p2.x, p.y - p2.y);
+                    if(dist < 190) { 
+                        ctx.beginPath();
+                        ctx.lineWidth = 0.9;
+                        ctx.strokeStyle = `rgba(0, 217, 255, ${0.3 - dist/700})`;
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                }
+            });
+            requestAnimationFrame(draw);
+        }
+        init();
+        draw();
+        window.onresize = init;
+    </script>
+
+    <section class="services-section">
+        <div class="container">
+            <div class="section-intro">
+                <h2>Lo que nos hace <mark>diferentes en Itagüí</mark></h2>
+                <p>No somos solo internet, somos el equipo que está a la vuelta de tu casa listo para que tu familia disfrute lo mejor del mundo digital.</p>
+            </div>
+
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="icon-box">🚀</div>
+                    <h3>Internet que sí corre</h3>
+                    <p>Navega, sube videos y juega sin lag. Te damos <strong>velocidad real</strong> para que nadie en casa se quede colgado mientras estudia o trabaja.</p>
+                    <div class="card-footer">Fibra simétrica de alta fidelidad</div>
+                </div>
+
+                <div class="service-card">
+                    <div class="icon-box">📺</div>
+                    <h3>Cine en tu sala</h3>
+                    <p>Televisión en alta definición con los canales que a tu familia le encantan. Imágenes nítidas para que no te pierdas ni un detalle.</p>
+                    <div class="card-footer">HD incluido en todos los planes</div>
+                </div>
+
+                <div class="service-card highlighted">
+                    <div class="icon-box">🤝</div>
+                    <h3>Aquí mismo, en Itagüí</h3>
+                    <p>Si nos necesitas, estamos cerca. Olvídate de esperar horas al teléfono; somos tu proveedor local y te atendemos con cariño y rapidez.</p>
+                    <div class="card-footer">Soporte técnico real y humano</div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
+
+<style>
+    .services-section {
+        position: relative;
+        padding: 80px 0 100px 0;
+        background: #01040a;
+        margin-top: -5vh; /* Sube la sección para conectar con el Hero */
+        z-index: 20;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border-top: 1px solid rgba(0, 217, 255, 0.1);
+    }
+
+    /* INDICADOR DE SCROLL GENIAL */
+    .scroll-indicator {
+        position: absolute;
+        top: -40px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        z-index: 30;
+    }
+
+    .arrow span {
+        display: block;
+        width: 12px;
+        height: 12px;
+        border-bottom: 2px solid var(--primary);
+        border-right: 2px solid var(--primary);
+        transform: rotate(45deg);
+        margin: -5px;
+        animation: arrowScroll 2s infinite;
+        opacity: 0.6;
+    }
+
+    .arrow span:nth-child(2) { animation-delay: -0.2s; }
+
+    @keyframes arrowScroll {
+        0% { opacity: 0; transform: rotate(45deg) translate(-10px, -10px); }
+        50% { opacity: 1; }
+        100% { opacity: 0; transform: rotate(45deg) translate(10px, 10px); }
+    }
+
+    /* SEÑAL WI-FI POTENCIADA */
+    .signal-container {
+        position: absolute;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    .wifi-wave {
+        position: absolute;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        border: 1px solid var(--primary);
+        border-radius: 50%;
+        opacity: 0;
+        animation: ripple 8s infinite cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .wifi-wave:nth-child(2) { animation-delay: 2.5s; }
+    .wifi-wave:nth-child(3) { animation-delay: 5s; }
+
+    @keyframes ripple {
+        0% { width: 0; height: 0; opacity: 0.4; }
+        100% { width: 1400px; height: 1400px; opacity: 0; }
+    }
+
+    /* CONTENEDOR */
+    .container {
+        position: relative;
+        z-index: 2;
+        max-width: 1200px;
+        width: 90%;
+        margin: 0 auto;
+    }
+
+    .section-intro {
+        text-align: center;
+        margin-bottom: 70px;
+    }
+
+    .section-intro h2 {
+        font-size: clamp(2.2rem, 5vw, 3.2rem);
+        font-weight: 800;
+        margin-bottom: 20px;
+        letter-spacing: -1.5px;
+    }
+
+    .section-intro h2 mark { background: none; color: var(--primary); text-shadow: 0 0 20px rgba(0,217,255,0.2); }
+
+    .section-intro p {
+        font-size: 1.25rem;
+        color: rgba(255,255,255,0.7);
+        max-width: 750px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+
+    /* GRID DE TARJETAS ROBUSTAS */
+    .services-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 30px;
+        margin-bottom: 60px;
+    }
+
+    .service-card {
+        position: relative;
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 50px 40px;
+        border-radius: 40px;
+        transition: all 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+        overflow: hidden;
+        backdrop-filter: blur(15px);
+    }
+
+    .service-card:hover {
+        transform: translateY(-12px);
+        border-color: var(--primary);
+        background: rgba(255, 255, 255, 0.04);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .card-glow {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: radial-gradient(circle at top right, rgba(0, 217, 255, 0.12), transparent 70%);
+        pointer-events: none;
+    }
+
+    .icon-box { font-size: 3rem; margin-bottom: 25px; }
+
+    .service-card h3 {
+        font-size: 1.7rem;
+        font-weight: 700;
+        margin-bottom: 18px;
+        color: #fff;
+    }
+
+    .service-card p {
+        font-size: 1.05rem;
+        color: rgba(255,255,255,0.6);
+        line-height: 1.7;
+        margin-bottom: 25px;
+    }
+
+    .card-footer {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: var(--primary);
+        font-weight: 600;
+        border-top: 1px solid rgba(255,255,255,0.1);
+        padding-top: 20px;
+        opacity: 0.8;
+    }
+
+    .highlighted {
+        background: rgba(0, 217, 255, 0.04);
+        border: 1px solid rgba(0, 217, 255, 0.25);
+    }
+
+    /* ETIQUETA LOCAL */
+    .location-tag {
+        text-align: center;
+        background: rgba(0, 217, 255, 0.05);
+        padding: 18px 40px;
+        border-radius: 100px;
+        display: block;
+        width: fit-content;
+        margin: 0 auto;
+        font-size: 1.1rem;
+        border: 1px solid rgba(0, 217, 255, 0.15);
+        backdrop-filter: blur(5px);
+    }
+
+    .location-tag strong { color: var(--primary); font-weight: 700; }
+
+    @media (max-width: 768px) {
+        .services-section { margin-top: -2vh; padding-top: 60px; }
+        .services-grid { grid-template-columns: 1fr; }
+        .service-card { padding: 40px 30px; }
+        .scroll-indicator { display: none; }
+    }
+</style>
+<section class="tech-impact-section">
+    <div class="tech-bg-container">
+        <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=1920" alt="Tecnología de Red" class="tech-bg-img">
+        <div class="tech-overlay"></div>
+    </div>
+
+    <canvas id="fiber-connection-canvas"></canvas>
+
+    <div class="container tech-flex">
+        <div class="tech-content-left">
+            <p class="pre-title">Tecnología que te entiende</p>
+            <h2 class="tech-title">Nuestra fibra <br><mark>no conoce límites</mark></h2>
+            
+            <div class="tech-description">
+                <p>En Itagüí, sabemos que tu tiempo vale. Por eso, nuestra infraestructura de última generación garantiza que cada bit llegue a tu hogar con la fuerza de un rayo.</p>
+            </div>
+
+            <a href="https://wa.me/573019023022" class="disruptive-btn">
+                ¡Quiero volar con Comunettv!
+                <span class="btn-shine"></span>
+            </a>
+        </div>
+
+        <div class="tech-list-right">
+            <div class="list-item">
+                <span class="dot"></span>
+                <div>
+                    <h4>Latencia ultra baja</h4>
+                    <p>Ideal para gamers y videollamadas sin congelamientos.</p>
+                </div>
+            </div>
+            <div class="list-item">
+                <span class="dot"></span>
+                <div>
+                    <h4>Conexión Simétrica</h4>
+                    <p>Sube tus archivos tan rápido como los descargas.</p>
+                </div>
+            </div>
+            <div class="list-item">
+                <span class="dot"></span>
+                <div>
+                    <h4>Estabilidad Total</h4>
+                    <p>Nuestra red es inmune a interferencias climáticas.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .tech-impact-section {
+        position: relative;
+        padding: 120px 0;
+        min-height: 90vh;
+        background: #01040a;
+        /* AJUSTE: Se sube la sección para conectar mejor */
+        margin-top: -80px; 
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+        z-index: 25;
+    }
+
+    /* INDICATIVO DE SCROLL SUTIL EN LA PARTE SUPERIOR */
+    .tech-impact-section::before {
+        content: '';
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 20px;
+        height: 30px;
+        border: 2px solid rgba(0, 217, 255, 0.3);
+        border-radius: 10px;
+        z-index: 30;
+    }
+    
+    .tech-impact-section::after {
+        content: '';
+        position: absolute;
+        top: 25px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 4px;
+        height: 8px;
+        background: var(--primary);
+        border-radius: 2px;
+        animation: scrollDot 2s infinite;
+        z-index: 30;
+    }
+
+    @keyframes scrollDot {
+        0% { opacity: 0; transform: translate(-50%, 0); }
+        50% { opacity: 1; transform: translate(-50%, 5px); }
+        100% { opacity: 0; transform: translate(-50%, 10px); }
+    }
+
+    /* FONDO FULL HD CON EFECTO */
+    .tech-bg-container {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        z-index: 1;
+    }
+
+    .tech-bg-img {
+        width: 100%; height: 100%;
+        object-fit: cover;
+        filter: brightness(0.2) saturate(0.5);
+    }
+
+    .tech-overlay {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: linear-gradient(90deg, #01040a 20%, transparent 60%, #01040a 95%);
+    }
+
+    /* CANVAS DE CONEXIÓN (CABLES) */
+    #fiber-connection-canvas {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        z-index: 2;
+        pointer-events: none;
+    }
+
+    .tech-flex {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 50px;
+        z-index: 10;
+        position: relative;
+    }
+
+    /* TEXTO IZQUIERDA DINÁMICO */
+    .tech-content-left {
+        flex: 1;
+        max-width: 600px;
+        text-align: left;
+    }
+
+    .pre-title {
+        color: var(--primary);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        margin-bottom: 10px;
+        font-size: 0.9rem;
+        display: block;
+    }
+
+    .tech-title {
+        font-size: clamp(2.5rem, 6vw, 4rem);
+        line-height: 1;
+        font-weight: 800;
+        margin-bottom: 30px;
+    }
+
+    .tech-description {
+        border-left: 3px solid var(--primary);
+        padding-left: 25px;
+        margin-bottom: 40px;
+    }
+
+    .tech-description p {
+        font-size: 1.2rem;
+        color: rgba(255,255,255,0.8);
+        line-height: 1.6;
+    }
+
+    /* BOTÓN DISRUPTIVO */
+    .disruptive-btn {
+        position: relative;
+        display: inline-block;
+        padding: 20px 45px;
+        background: var(--primary);
+        color: #01040a;
+        text-decoration: none;
+        font-weight: 800;
+        font-size: 1.1rem;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: 0.3s;
+        box-shadow: 0 10px 30px rgba(0, 217, 255, 0.3);
+    }
+
+    .disruptive-btn:hover {
+        transform: scale(1.05) rotate(-1deg);
+        box-shadow: 0 15px 45px rgba(0, 217, 255, 0.5);
+    }
+
+    .btn-shine {
+        position: absolute;
+        top: 0; left: -100%;
+        width: 100%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+        animation: shine 3s infinite;
+    }
+
+    @keyframes shine { 100% { left: 100%; } }
+
+    /* LISTA DERECHA SUTIL */
+    .tech-list-right {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 35px;
+        max-width: 450px;
+    }
+
+    .list-item {
+        display: flex;
+        gap: 20px;
+        align-items: flex-start;
+        transition: 0.4s;
+    }
+
+    .list-item:hover { transform: translateX(10px); }
+
+    .dot {
+        width: 12px; height: 12px;
+        background: var(--primary);
+        border-radius: 50%;
+        margin-top: 8px;
+        box-shadow: 0 0 15px var(--primary);
+    }
+
+    .list-item h4 { font-size: 1.3rem; margin-bottom: 5px; color: #fff; }
+    .list-item p { color: rgba(255,255,255,0.6); line-height: 1.4; }
+
+    /* RESPONSIVE */
+    @media (max-width: 992px) {
+        .tech-flex { flex-direction: column; text-align: left; }
+        .tech-overlay { background: rgba(1, 4, 10, 0.85); }
+        .tech-content-left { max-width: 100%; }
+        .tech-list-right { max-width: 100%; }
+    }
+</style>
+
+<script>
+    const fiberCanvas = document.getElementById('fiber-connection-canvas');
+    const ftx = fiberCanvas.getContext('2d');
+
+    let lines = [];
+
+    function initFiber() {
+        fiberCanvas.width = window.innerWidth;
+        fiberCanvas.height = window.innerHeight;
+        lines = [];
+        for(let i=0; i<5; i++) {
+            lines.push({
+                x: Math.random() * fiberCanvas.width,
+                y: fiberCanvas.height + 10,
+                targetX: fiberCanvas.width * 0.8,
+                targetY: fiberCanvas.height * 0.4,
+                progress: Math.random() * -1, // Retraso inicial
+                speed: 0.005 + Math.random() * 0.005,
+                width: 1 + Math.random() * 2
+            });
+        }
+    }
+
+    function drawFiber() {
+        ftx.clearRect(0,0,fiberCanvas.width, fiberCanvas.height);
+        
+        lines.forEach(l => {
+            l.progress += l.speed;
+            if(l.progress > 1) {
+                l.progress = -0.2;
+                l.x = Math.random() * fiberCanvas.width;
+            }
+
+            if(l.progress > 0) {
+                // Dibujar curva de cable "poder"
+                ftx.beginPath();
+                ftx.moveTo(l.x, l.y);
+                
+                // Punto de control para la curva
+                let cpX = (l.x + l.targetX) / 2;
+                let cpY = (l.y + l.targetY) / 2 - 100;
+
+                // Dibujar solo la parte según el progreso
+                ftx.setLineDash([l.progress * 500, 1000]);
+                ftx.quadraticCurveTo(cpX, cpY, l.targetX, l.targetY);
+                
+                ftx.strokeStyle = "rgba(0, 217, 255, 0.4)";
+                ftx.lineWidth = l.width;
+                ftx.stroke();
+
+                // Cabeza de luz (impulso eléctrico)
+                let t = l.progress;
+                let cx = (1-t)*(1-t)*l.x + 2*(1-t)*t*cpX + t*t*l.targetX;
+                let cy = (1-t)*(1-t)*l.y + 2*(1-t)*t*cpY + t*t*l.targetY;
+
+                ftx.beginPath();
+                ftx.arc(cx, cy, 4, 0, Math.PI*2);
+                ftx.fillStyle = "#fff";
+                ftx.shadowBlur = 15;
+                ftx.shadowColor = "#00d9ff";
+                ftx.fill();
+            }
+        });
+        requestAnimationFrame(drawFiber);
+    }
+
+    initFiber();
+    drawFiber();
+    window.addEventListener('resize', initFiber);
+</script>
+<section class="pricing-section">
+    <div class="container">
+        <div class="pricing-header">
+            <p class="pricing-pre">Flexibilidad y Ahorro</p>
+            <h2>Las mejores ofertas <br><mark>en fibra y televisión</mark></h2>
+            <p class="pricing-desc">Descubre nuestros planes y promociones exclusivas en Itagüí. Eleva tu entretenimiento al mejor precio sin letras chiquitas.</p>
+        </div>
+
+        <div class="pricing-grid">
+            <div class="price-card">
+                <div class="popular-tag">¡Más Económico!</div>
+                <div class="plan-speed">200 <span>MB</span></div>
+                <div class="plan-plus">+ Televisión HD</div>
+                <div class="plan-price">
+                    <span class="currency">$</span>69.000<span class="period">pesos</span>
+                </div>
+                <div class="plan-tax">IVA incluido</div>
+                <ul class="plan-features">
+                    <li><span class="check">✔</span> Internet por Fibra Óptica</li>
+                    <li><span class="check">✔</span> Televisión de Alta Definición</li>
+                    <li><span class="check">✔</span> Soporte Local Prioritario</li>
+                </ul>
+                <a href="https://wa.me/573019023022" class="plan-btn">¡Contratar ahora!</a>
+            </div>
+
+            <div class="price-card featured">
+                <div class="popular-tag">¡El más buscado!</div>
+                <div class="plan-speed">300 <span>MB</span></div>
+                <div class="plan-plus">+ Televisión HD</div>
+                <div class="plan-price">
+                    <span class="currency">$</span>75.000<span class="period">pesos</span>
+                </div>
+                <div class="plan-tax">IVA incluido</div>
+                <ul class="plan-features">
+                    <li><span class="check">✔</span> Internet por Fibra Óptica</li>
+                    <li><span class="check">✔</span> Televisión de Alta Definición</li>
+                    <li><span class="check">✔</span> Ideal para Teletrabajo</li>
+                </ul>
+                <a href="https://wa.me/573019023022" class="plan-btn">¡Contratar ahora!</a>
+            </div>
+
+            <div class="price-card">
+                <div class="plan-speed">400 <span>MB</span></div>
+                <div class="plan-plus">+ Televisión HD</div>
+                <div class="plan-price">
+                    <span class="currency">$</span>85.000<span class="period">pesos</span>
+                </div>
+                <div class="plan-tax">IVA incluido</div>
+                <ul class="plan-features">
+                    <li><span class="check">✔</span> Internet por Fibra Óptica</li>
+                    <li><span class="check">✔</span> Televisión de Alta Definición</li>
+                    <li><span class="check">✔</span> Multi-dispositivos 4K</li>
+                </ul>
+                <a href="https://wa.me/573019023022" class="plan-btn">¡Contratar ahora!</a>
+            </div>
+
+            <div class="price-card premium">
+                <div class="popular-tag">Potencia Máxima</div>
+                <div class="plan-speed">500 <span>MB</span></div>
+                <div class="plan-plus">+ Televisión HD</div>
+                <div class="plan-price">
+                    <span class="currency">$</span>95.000<span class="period">pesos</span>
+                </div>
+                <div class="plan-tax">IVA incluido</div>
+                <ul class="plan-features">
+                    <li><span class="check">✔</span> Internet por Fibra Óptica</li>
+                    <li><span class="check">✔</span> Televisión de Alta Definición</li>
+                    <li><span class="check">✔</span> Máximo rendimiento Gamer</li>
+                </ul>
+                <a href="https://wa.me/573019023022" class="plan-btn">¡Contratar ahora!</a>
+            </div>
+        </div>
+
+        <div class="pricing-footer-link">
+            <span>¿Necesitas un plan a tu medida?</span>
+            <a href="https://wa.me/573019023022" class="contact-inline">Habla con nosotros ahora mismo</a>
+        </div>
+    </div>
+</section>
+
+<style>
+    .pricing-section {
+        background: #01040a;
+        padding: 40px 0 100px 0;
+        margin-top: -2px;
+        position: relative;
+        z-index: 30;
+    }
+
+    .pricing-header {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+
+    .pricing-pre {
+        color: var(--primary);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+    }
+
+    .pricing-header h2 {
+        font-size: clamp(2.2rem, 5vw, 3.2rem);
+        font-weight: 800;
+        margin-bottom: 20px;
+        line-height: 1.1;
+        letter-spacing: -1px;
+    }
+
+    .pricing-desc {
+        max-width: 700px;
+        margin: 0 auto;
+        color: rgba(255,255,255,0.6);
+        font-size: 1.15rem;
+        line-height: 1.6;
+    }
+
+    .pricing-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+        gap: 25px;
+        margin-bottom: 60px;
+    }
+
+    .price-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 35px;
+        padding: 50px 30px;
+        text-align: center;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .price-card:hover {
+        transform: translateY(-12px);
+        background: rgba(255, 255, 255, 0.05);
+        border-color: var(--primary);
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+    }
+
+    .popular-tag {
+        position: absolute;
+        top: 18px; right: -35px;
+        background: var(--primary);
+        color: #01040a;
+        padding: 6px 45px;
+        font-size: 0.75rem;
+        font-weight: 800;
+        transform: rotate(45deg);
+        text-transform: uppercase;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .plan-speed {
+        font-size: 3.8rem;
+        font-weight: 800;
+        color: #fff;
+        line-height: 1;
+        letter-spacing: -2px;
+    }
+
+    .plan-speed span {
+        font-size: 1.3rem;
+        color: var(--primary);
+        font-weight: 400;
+        letter-spacing: 1px;
+    }
+
+    .plan-plus {
+        margin: 15px 0;
+        font-weight: 600;
+        color: rgba(255,255,255,0.95);
+        font-size: 1.2rem;
+    }
+
+    .plan-price {
+        font-size: 3.2rem;
+        font-weight: 800;
+        color: #fff;
+        margin-top: 15px;
+        letter-spacing: -1px;
+    }
+
+    .plan-price .currency {
+        font-size: 1.6rem;
+        vertical-align: top;
+        color: var(--primary);
+        margin-right: 2px;
+    }
+
+    .plan-price .period {
+        font-size: 1.1rem;
+        color: rgba(255,255,255,0.4);
+        margin-left: 6px;
+        font-weight: 400;
+        text-transform: lowercase;
+    }
+
+    .plan-tax {
+        font-size: 0.9rem;
+        color: var(--primary);
+        margin-bottom: 30px;
+        font-weight: 600;
+    }
+
+    .plan-features {
+        list-style: none;
+        text-align: left;
+        margin-bottom: 40px;
+        padding: 0 10px;
+    }
+
+    .plan-features li {
+        color: rgba(255,255,255,0.7);
+        margin-bottom: 14px;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .check { color: var(--primary); font-size: 1.1rem; }
+
+    .plan-btn {
+        display: block;
+        padding: 20px;
+        background: transparent;
+        border: 2px solid var(--primary);
+        color: #fff;
+        text-decoration: none;
+        border-radius: 18px;
+        font-weight: 800;
+        font-size: 1.05rem;
+        transition: 0.3s;
+    }
+
+    .plan-btn:hover {
+        background: var(--primary);
+        color: #01040a;
+        transform: scale(1.02);
+    }
+
+    .featured {
+        background: rgba(0, 217, 255, 0.05);
+        border: 2px solid var(--primary);
+        transform: scale(1.05);
+    }
+    
+    .featured .plan-btn { background: var(--primary); color: #01040a; }
+
+    /* ESTILO LINK DE CONTACTO FINAL */
+    .pricing-footer-link {
+        text-align: center;
+        margin-top: 50px;
+        font-size: 1.2rem;
+        color: rgba(255,255,255,0.7);
+    }
+
+    .contact-inline {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 700;
+        margin-left: 8px;
+        position: relative;
+        transition: 0.3s;
+        border-bottom: 1px dashed var(--primary);
+        padding-bottom: 2px;
+    }
+
+    .contact-inline:hover {
+        color: #fff;
+        border-bottom-style: solid;
+    }
+
+    @media (max-width: 768px) {
+        .pricing-grid { grid-template-columns: 1fr; padding: 0 15px; }
+        .featured { transform: scale(1); }
+        .pricing-footer-link { padding: 0 20px; line-height: 1.5; }
+        .contact-inline { display: block; margin-top: 10px; border-bottom: none; text-decoration: underline; }
+    }
+</style>
+<section class="trust-section">
+    <div class="container">
+        
+        <div class="reviews-header" data-aos="fade-up">
+            <div class="trust-badge">
+                <svg class="trust-badge-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="#FBBC05"/>
+                </svg>
+                <span>Reseñas de satisfacción garantizada</span>
+            </div>
+            <h2 class="section-title-dark">Lo que dicen <br><span>nuestros clientes</span></h2>
+        </div>
+
+        <div class="reviews-wrapper">
+            <div class="reviews-track">
+                <div class="review-card">
+                    <div class="card-inner">
+                        <div class="stars">★★★★★</div>
+                        <p class="review-text">"El cambio a Comunettv fue excelente. Antes el internet fallaba mucho, pero ahora con la fibra todos nos conectamos a la vez sin problemas. Instalación muy rápida."</p>
+                        <div class="user-info">
+                            <div class="user-avatar">IM</div>
+                            <div>
+                                <h4 class="user-name">Isabel Cristina Montoya</h4>
+                                <span class="verified">Cliente Verificado</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="review-card">
+                    <div class="card-inner">
+                        <div class="stars">★★★★★</div>
+                        <p class="review-text">"Muy contentos con el servicio. El paquete de internet y TV es genial, la tele se ve nítida con muchos canales y el internet es rápido. Un servicio confiable."</p>
+                        <div class="user-info">
+                            <div class="user-avatar">JD</div>
+                            <div>
+                                <h4 class="user-name">Juan Diego Gómez</h4>
+                                <span class="verified">Cliente Verificado</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="review-card">
+                    <div class="card-inner">
+                        <div class="stars">★★★★★</div>
+                        <p class="review-text">"Necesito internet que no falle para trabajar en casa y con ellos lo tengo. La conexión es estable, nunca se cae y la atención es rápida y amable."</p>
+                        <div class="user-info">
+                            <div class="user-avatar">AR</div>
+                            <div>
+                                <h4 class="user-name">Ana María Restrepo</h4>
+                                <span class="verified">Cliente Verificado</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="review-card">
+                    <div class="card-inner">
+                        <div class="stars">★★★★★</div>
+                        <p class="review-text">"La mejor decisión para mi hogar. Mis hijos juegan online y yo veo mis series sin que se trabe nada. El técnico que vino fue muy profesional."</p>
+                        <div class="user-info">
+                            <div class="user-avatar">CP</div>
+                            <div>
+                                <h4 class="user-name">Carlos Pérez</h4>
+                                <span class="verified">Cliente Verificado</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr class="section-divider">
+
+        <div class="advantages-wrapper">
+            <div class="advantages-info" data-aos="fade-right">
+                <h3 class="advantage-title">¿Por qué elegir <mark>Comunettv</mark>?</h3>
+                <p class="advantage-intro">En Comunettv entendemos que tu hogar necesita una conexión de alto rendimiento. Implementamos soluciones de red de última generación con un enfoque humano y profesional.</p>
+                
+                <div class="tech-certification">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                    <span>Infraestructura de Fibra Óptica Certificada</span>
+                </div>
+            </div>
+
+            <div class="advantages-grid" data-aos="fade-left">
+                <div class="adv-item">
+                    <div class="adv-icon-svg">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polyline></svg>
+                    </div>
+                    <h4>Ancho de Banda Simétrico</h4>
+                    <p>Misma capacidad de carga y descarga para procesos de datos críticos.</p>
+                </div>
+                <div class="adv-item">
+                    <div class="adv-icon-svg">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"></rect><polyline points="17 2 12 7 7 2"></polyline></svg>
+                    </div>
+                    <h4>Transmisión Digital HD</h4>
+                    <p>Señal de televisión optimizada con mínima latencia y máxima nitidez.</p>
+                </div>
+                <div class="adv-item">
+                    <div class="adv-icon-svg">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    </div>
+                    <h4>Ecosistema Conectado</h4>
+                    <p>Soporte multidefinitivo nativo para streaming 4K y entornos gaming.</p>
+                </div>
+                <div class="adv-item">
+                    <div class="adv-icon-svg">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17 11 19 13 23 9"></polyline></svg>
+                    </div>
+                    <h4>Soporte Especializado</h4>
+                    <p>Resolución técnica presencial y remota sin gestión de bots.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .trust-section {
+        background: #ffffff;
+        padding: 100px 0;
+        overflow: hidden;
+        color: #1a1a1a;
+    }
+
+    .trust-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: #f8f9fa;
+        padding: 10px 22px;
+        border-radius: 50px;
+        margin-bottom: 25px;
+        border: 1px solid #eee;
+    }
+
+    .trust-badge-icon { width: 18px; height: 18px; }
+    .trust-badge span { font-size: 0.85rem; font-weight: 700; color: #555; letter-spacing: 0.3px; }
+
+    .section-title-dark { font-size: clamp(2.2rem, 5vw, 3.2rem); font-weight: 800; line-height: 1.1; margin-bottom: 50px; letter-spacing: -1.5px; }
+    .section-title-dark span { color: var(--primary); }
+
+    /* REVIEWS SYSTEM */
+    .reviews-wrapper { width: 100%; position: relative; z-index: 10; }
+    .reviews-track { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; }
+
+    .review-card { perspective: 1000px; height: 100%; }
+
+    .card-inner {
+        background: #fff;
+        padding: 40px;
+        border-radius: 25px;
+        border: 1px solid #f2f2f2;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.03);
+        transition: 0.5s cubic-bezier(0.2, 1, 0.3, 1);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+
+    .card-inner::after {
+        content: '';
+        position: absolute;
+        bottom: 25px;
+        right: 25px;
+        width: 50px;
+        height: 50px;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23f5f5f5'%3E%3Cpath d='M14.017 21L14.017 18C14.017 16.8954 14.9125 16 16.0171 16H19.0171C19.5694 16 20.0171 15.5523 20.0171 15V9C20.0171 8.44772 19.5694 8 19.0171 8H14.0171C13.4648 8 13.0171 8.44772 13.0171 9V12C13.0171 12.5523 12.5694 13 12.0171 13H10.0171C9.46481 13 9.01709 12.5523 9.01709 12V9C9.01709 8.44772 8.56937 8 8.01709 8H3.01709C2.46481 8 2.01709 8.44772 2.01709 9V15C2.01709 15.5523 2.46481 16 3.01709 16H6.01709C7.12166 16 8.01709 16.8954 8.01709 18V21H14.0171Z'/%3E%3C/svg%3E") no-repeat center;
+        opacity: 0.6;
+        pointer-events: none;
+    }
+
+    .card-inner:hover {
+        transform: translateY(-10px);
+        border-color: #FBBC05;
+        box-shadow: 0 25px 50px rgba(251, 188, 5, 0.1);
+    }
+
+    .stars { color: #FBBC05; font-size: 1.1rem; margin-bottom: 20px; letter-spacing: 2px; }
+    .review-text { font-style: italic; color: #444; line-height: 1.7; font-size: 0.95rem; flex-grow: 1; margin-bottom: 25px; }
+
+    .user-info { display: flex; align-items: center; gap: 15px; border-top: 1px solid #f9f9f9; padding-top: 20px; }
+    
+    .user-avatar { 
+        width: 44px; height: 44px; border-radius: 12px; 
+        display: flex; align-items: center; justify-content: center; 
+        background-color: #FBBC05; color: #1a1a1a; 
+        font-weight: 800; font-size: 0.9rem;
+    }
+    
+    .user-name { font-weight: 700; font-size: 0.95rem; margin: 0; color: #1a1a1a; }
+    .verified { font-size: 0.75rem; color: #34A853; font-weight: 700; text-transform: uppercase; }
+
+    .section-divider { border: none; height: 1px; background: linear-gradient(90deg, transparent, #eee, transparent); margin: 80px 0; }
+
+    /* ADVANTAGES GRID */
+    .advantages-wrapper { display: grid; grid-template-columns: 1fr 1.3fr; gap: 70px; align-items: flex-start; }
+    .advantage-title { font-size: 2.6rem; font-weight: 800; margin-bottom: 25px; letter-spacing: -1px; }
+    .advantage-title mark { background: none; color: var(--primary); }
+    .advantage-intro { font-size: 1.1rem; color: #555; line-height: 1.8; margin-bottom: 30px; }
+    
+    .tech-certification { display: flex; align-items: center; gap: 10px; color: #1a1a1a; font-weight: 700; font-size: 0.9rem; }
+    .tech-certification svg { color: #34A853; }
+
+    .advantages-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .adv-item { padding: 35px; border-radius: 20px; background: #fafafa; border: 1px solid #f0f0f0; transition: 0.3s; }
+    .adv-item:hover { background: #fff; border-color: var(--primary); transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.04); }
+    
+    .adv-icon-svg { width: 42px; height: 42px; color: #FBBC05; margin-bottom: 20px; }
+
+    .adv-item h4 { font-weight: 800; font-size: 1.15rem; margin-bottom: 12px; color: #1a1a1a; }
+    .adv-item p { font-size: 0.9rem; color: #666; line-height: 1.6; }
+
+    /* RESPONSIVE */
+    @media (max-width: 1024px) {
+        .reviews-track { grid-template-columns: repeat(2, 1fr); }
+        .advantages-wrapper { grid-template-columns: 1fr; gap: 50px; }
+    }
+
+    @media (max-width: 768px) {
+        .trust-section { padding: 80px 0; }
+        .reviews-wrapper { overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 30px; margin: 0 -15px; -webkit-overflow-scrolling: touch; }
+        .reviews-wrapper::-webkit-scrollbar { display: none; }
+
+        .reviews-track { display: flex; width: max-content; gap: 20px; padding: 0 15px; animation: scrollMobile 40s linear infinite; }
+        .reviews-track:hover { animation-play-state: paused; }
+
+        .review-card { width: 85vw; scroll-snap-align: center; perspective: none; }
+        .advantages-grid { grid-template-columns: 1fr; }
+
+        @keyframes scrollMobile {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(-85vw * 4 - 20px * 4)); }
+        }
+    }
+</style>
+
+<script>
+    // Efecto Tilt para Desktop
+    const reviewCards = document.querySelectorAll('.card-inner');
+    if (window.innerWidth > 1024) {
+        reviewCards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const rotateX = (y - rect.height / 2) / 20;
+                const rotateY = (rect.width / 2 - x) / 20;
+                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1)`;
+            });
+        });
+    }
+
+    // Lógica de Scroll Infinito para Móvil
+    window.addEventListener('load', () => {
+        if (window.innerWidth <= 768) {
+            const track = document.querySelector('.reviews-track');
+            track.innerHTML += track.innerHTML; // Duplicar cards para loop infinito
+        }
+    });
+</script>
+<footer class="main-footer">
+    <div class="footer-content">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col" data-aos="fade-up">
+                    <h3 class="footer-logo">Comunettv</h3>
+                    <p class="company-desc">
+                        Llevamos tecnología de punta con corazón humano. Somos el aliado local en Itagüí que transforma tu manera de conectar con el mundo a través de fibra óptica de alto rendimiento.
+                    </p>
+                    <a href="terminos-condiciones.pdf" download class="btn-download">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v4m4-10l5 5 5-5m-5-5v12"/></svg>
+                        Términos y Condiciones (PDF)
+                    </a>
+                </div>
+
+                <div class="footer-col" data-aos="fade-up" data-aos-delay="100">
+                    <h4>Contacto</h4>
+                    <ul class="contact-list">
+                        <li>
+                            <span class="icon">📍</span>
+                            <a href="https://www.google.com/maps/search/?api=1&query=6.172421,-75.614761" target="_blank">Calle 36 # 50a - 23, Itagüí</a>
+                        </li>
+                        <li>
+                            <span class="icon">📧</span>
+                            <a href="mailto:servicioalcliente@comunettv.com">servicioalcliente@comunettv.com</a>
+                        </li>
+                        <li>
+                            <span class="icon">📞</span>
+                            <div class="phones">
+                                <span>301 902 3022</span>
+                                <span>314 734 9828</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="footer-col" data-aos="fade-up" data-aos-delay="200">
+                    <h4>Horarios</h4>
+                    <ul class="schedule-list">
+                        <li><strong>Lunes a Viernes:</strong> 8 am - 5 pm</li>
+                        <li><strong>Sábados:</strong> 8 am - 12 pm</li>
+                        <li class="status-badge"><span class="dot"></span> Soporte Técnico Activo</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="map-container-wrapper" id="map-trigger">
+                <div id="leaflet-map"></div>
+                <div class="map-overlay-scan"></div>
+                <div class="map-label-tech">NETWORK NODE: ITAGÜÍ</div>
+                <a href="https://www.google.com/maps/search/?api=1&query=6.172421,-75.614761" target="_blank" class="map-link-layer"></a>
+            </div>
+
+            <div class="footer-bottom">
+                <div class="copyright">
+                    © 2025 <strong>Comunettv</strong>. Todos los derechos reservados.
+                </div>
+                <div class="credits">
+                    Hecho con pasión por <a href="https://redsapiens.com" target="_blank" class="red-sapiens-link">redsapiens.com</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<style>
+    :root {
+        --footer-bg: #01040a;
+        --accent-blue: #00d9ff;
+        --red-sapiens: #ff0000;
+    }
+
+    .main-footer {
+        background: var(--footer-bg);
+        color: #fff;
+        padding: 80px 0 30px;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+    .footer-grid {
+        display: grid;
+        grid-template-columns: 1.5fr 1fr 1fr;
+        gap: 50px;
+        margin-bottom: 40px;
+    }
+
+    .footer-logo { font-size: 2.2rem; color: var(--accent-blue); margin-bottom: 15px; font-weight: 800; }
+    .company-desc { color: #aaa; font-size: 0.95rem; line-height: 1.6; max-width: 420px; }
+
+    .btn-download {
+        display: inline-flex; align-items: center; gap: 8px;
+        border: 1px solid var(--accent-blue); padding: 10px 18px;
+        border-radius: 6px; color: #fff; text-decoration: none; font-size: 0.85rem;
+        margin-top: 20px; transition: 0.3s;
+    }
+    .btn-download:hover { background: var(--accent-blue); color: #000; }
+
+    h4 { color: #fff; margin-bottom: 25px; font-weight: 700; position: relative; }
+    h4::after { content: ''; position: absolute; left: 0; bottom: -8px; width: 30px; height: 2px; background: var(--accent-blue); }
+
+    .contact-list, .schedule-list { list-style: none; padding: 0; }
+    .contact-list li, .schedule-list li { margin-bottom: 15px; color: #ddd; display: flex; gap: 12px; font-size: 0.9rem; }
+    .contact-list a { color: inherit; text-decoration: none; transition: 0.2s; }
+    .contact-list a:hover { color: var(--accent-blue); }
+
+    .status-badge { 
+        background: rgba(0, 217, 255, 0.1); border: 1px solid var(--accent-blue); 
+        padding: 5px 12px; border-radius: 50px; color: var(--accent-blue); 
+        font-size: 0.75rem; font-weight: bold; display: inline-flex; align-items: center; 
+    }
+    .dot { width: 7px; height: 7px; background: var(--accent-blue); border-radius: 50%; margin-right: 8px; animation: blink 2s infinite; }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    /* ESTILO MAPA LEAFLET */
+    .map-container-wrapper {
+        position: relative;
+        width: 100%;
+        height: 400px;
+        border-radius: 20px;
+        overflow: hidden;
+        margin-bottom: 40px;
+        border: 1px solid rgba(0, 217, 255, 0.3);
+        background: #000;
+    }
+
+    #leaflet-map {
+        width: 100%;
+        height: 100%;
+        filter: invert(100%) hue-rotate(180deg) brightness(0.7) saturate(1.8) contrast(1.2);
+    }
+
+    .map-overlay-scan {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: linear-gradient(rgba(0, 217, 255, 0.03) 50%, transparent 50%);
+        background-size: 100% 4px;
+        pointer-events: none;
+        z-index: 2;
+    }
+
+    .map-label-tech {
+        position: absolute;
+        top: 20px; right: 20px;
+        background: rgba(0, 217, 255, 0.9);
+        color: #000; padding: 4px 12px; border-radius: 4px;
+        font-size: 0.65rem; font-weight: 900; z-index: 5;
+        letter-spacing: 1px;
+    }
+
+    .map-link-layer {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        z-index: 10; cursor: pointer;
+    }
+
+    .footer-bottom {
+        border-top: 1px solid rgba(255,255,255,0.08);
+        padding-top: 25px;
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.85rem;
+        color: #666;
+    }
+    
+    .red-sapiens-link {
+        color: var(--red-sapiens) !important;
+        text-decoration: none;
+        font-weight: 800;
+        transition: 0.3s;
+    }
+    .red-sapiens-link:hover { text-shadow: 0 0 10px rgba(255, 0, 0, 0.5); }
+
+    @media (max-width: 768px) {
+        .footer-grid { grid-template-columns: 1fr; }
+        .footer-bottom { flex-direction: column; text-align: center; gap: 15px; }
+    }
+</style>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Coordenadas exactas Calle 36 # 50a - 23, Itagüí
+        const exactCoords = [6.172421, -75.614761];
+        const spaceCoords = [6.1724, -75.6148];
+
+        // 1. Iniciamos el mapa "desde el espacio" (Zoom 2)
+        const map = L.map('leaflet-map', {
+            center: spaceCoords,
+            zoom: 2, 
+            zoomControl: false,
+            attributionControl: false,
+            dragging: false,
+            scrollWheelZoom: false,
+            doubleClickZoom: false
+        });
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+        const customIcon = L.divIcon({
+            className: 'custom-marker',
+            html: `<div style="background: #00d9ff; width: 18px; height: 18px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 20px #00d9ff;"></div>`,
+            iconSize: [18, 18],
+            iconAnchor: [9, 9]
+        });
+
+        const marker = L.marker(exactCoords, { icon: customIcon }).addTo(map);
+        marker.setOpacity(0); // Oculto hasta llegar
+
+        // 2. Función de vuelo cinemático
+        let hasFlown = false;
+        const triggerZoom = () => {
+            if (hasFlown) return;
+            hasFlown = true;
+
+            // Vuelo cinemático de 3 segundos
+            map.flyTo(exactCoords, 16, {
+                animate: true,
+                duration: 3, // EXACTAMENTE 3 SEGUNDOS
+                easeLinearity: 0.25
+            });
+
+            // Aparece el marcador suavemente al final del vuelo
+            setTimeout(() => {
+                marker.setOpacity(1);
+            }, 2500);
+        };
+
+        // 3. Detector de Scroll (Intersection Observer)
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) {
+                triggerZoom();
+            }
+        }, { threshold: 0.3 });
+
+        observer.observe(document.getElementById('map-trigger'));
+
+        // Reparar tamaño al cargar
+        setTimeout(() => map.invalidateSize(), 300);
+    });
+</script>
+
+</body>
+</html>
